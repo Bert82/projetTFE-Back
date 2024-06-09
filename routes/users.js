@@ -1,11 +1,12 @@
 var express = require('express');
-const controller = require('../controllers/mobiliteController');
+const controller = require('../controllers/usersController');
 
 var router = express.Router();
 
-//outer.get("/", controller.findAll);
-//router.get("/:id", controller.findOne);
-//router.post("/", controller.create);
+router.get("/", controller.findAll);
+router.get("/:id", controller.findOne);
+router.post("/", controller.create);
+router.post('/login', controller.log);
 //router.patch("/:id", controller.updateOne);
 //router.delete("/:id", controller.delete);
 

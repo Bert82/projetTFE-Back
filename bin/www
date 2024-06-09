@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('pmr-back:server');
 var http = require('http');
+const bcrypt = require('bcryptjs');
 
 /**
  * Get port from environment and store in Express.

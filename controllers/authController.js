@@ -1,25 +1,28 @@
-const db = require("../utils/db-client.util");
+/*const db = require("../utils/db-client.util");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-exports.loginAgent = (req, res) => {
-  const { nom, matricule } = req.body;
+const authController = {};
 
-  const query = 'SELECT * FROM agent_de_quartier WHERE nom = ? AND matricule = ?';
+authController.login = async(req, res) => {
+  const { email, password } = req.body;
 
-  db.query(query, [nom, matricule], (err, results) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ message: 'Server error' });
-    }
+  const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
 
-    if (results.length === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+  if (!user) {
+      return res.status(401).send('user not found');
+  }
 
-    const agent = results[0];
-    const token = jwt.sign({ id: idAgent_de_quartier.id }, 'your_jwt_secret', { expiresIn: '1h' });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+      return res.status(401).send('Invalid password');
+  }
 
-    res.json({ token });
-  });
+  const token = jwt.sign({ id: user.id, role: user.role }, 'secretkey', { expiresIn: '24h' });
+
+  res.json({ token });
+
+
 };
+
+module.exports = authController;*/

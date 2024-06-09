@@ -4,15 +4,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+
+const bodyPerser = require ('body-parser')
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 const agentsRouter = require('./routes/agent');
 const applicantRouter = require('./routes/applicant');
 const mobiliteRouter = require('./routes/mobilite');
 const csrRouter = require('./routes/csr');
 const agentReportRouter = require('./routes/agentReport');
-const authRouter = require('./routes/auth')
+//const authRouter = require('./routes/auth');
+const usersRouter = require('./routes/users');
+
 
 
 var app = express();
@@ -28,6 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyPerser.json());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -36,7 +41,7 @@ app.use('/applicant', applicantRouter);
 app.use('/mobilite', mobiliteRouter);
 app.use('/csr', csrRouter);
 app.use('/agentReport', agentReportRouter);
-app.use('/auth', authRouter);
+//app.use('/auth', authRouter);
 app.use(cors());
 
 // catch 404 and forward to error handler
