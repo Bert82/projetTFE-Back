@@ -42,7 +42,7 @@ app.use('/mobilite', mobiliteRouter);
 app.use('/csr', csrRouter);
 app.use('/agentReport', agentReportRouter);
 //app.use('/auth', authRouter);
-app.use(cors());
+//app.use(cors());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

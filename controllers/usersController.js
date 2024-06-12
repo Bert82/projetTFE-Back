@@ -3,11 +3,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); 
 
 
+
 const usersController = {};
 
 usersController.findAll = async (req, res) => {
-    try {
-      const data = await db.promise().query('SELECT * FROM users');
+    try {                                     
+      const data = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
       res.json(data);
     } catch (err) {
       console.error(err);
@@ -58,7 +59,7 @@ usersController.findOne = async (req, res) => {
     const { id } = req.params;
     
     try {
-      const [users] = await db.promise().query('SELECT * FROM users WHERE id = ?', [id]);
+      const [users] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id WHERE id = ?', [id]);
       
       if (!users) {
         return res.status(404).json({ message: 'Demandeur non trouvé' });
@@ -82,13 +83,14 @@ usersController.log = async (req, res) => {
 
         const user = results[0];
         console.log('User:', user);
+        console.log('User role:', user.role); 
         bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) throw err;
             console.log('Is match:', isMatch);
             if (!isMatch) return res.status(401).send('Password incorrect');
 
-            const token = jwt.sign({ id: user.id, role: user.role }, 'secretkey', { expiresIn: '24h' });
-            res.json({ token });
+            const token = jwt.sign({ id: user.id, role: user.role, nom: user.nom, prenom: user.prenom, email: user.email }, 'secretkey', { expiresIn: '24h' });
+            res.json({ token, role: user.role  });
         });
     });
 }
