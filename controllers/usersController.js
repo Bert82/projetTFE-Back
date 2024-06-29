@@ -8,11 +8,12 @@ const usersController = {};
 
 usersController.findAll = async (req, res) => {
     try {                                     
-      const data = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
+     // const [data, ] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
+     const data = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
       res.json(data);
     } catch (err) {
       console.error(err);
-      return;
+      return [];
     }
   };
 
@@ -22,7 +23,8 @@ usersController.create = async (req, res) => {
         prenom, 
         matricule,
         email,
-        password
+        password,
+        role
     } = req.body
 
    try {
@@ -31,11 +33,17 @@ usersController.create = async (req, res) => {
         prenom, 
         matricule,
         email,
-        password
+        password, 
+        role
     });
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: "Le format de l'adresse email est invalide." });
+  }
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const data = await db.promise().query('INSERT INTO users (nom, prenom, matricule, email, password) VALUES (?, ?, ?, ?, ?)', [nom, prenom, matricule, email, hashedPassword]);
+    const data = await db.promise().query('INSERT INTO users (nom, prenom, matricule, email, password, role) VALUES (?, ?, ?, ?, ?,?)', [nom, prenom, matricule, email, hashedPassword, role]);
     
     console.log("Données insérées :", data);
 
@@ -46,13 +54,15 @@ usersController.create = async (req, res) => {
     prenom: prenom,
     matricule: matricule,
     email: email,
-    password: hashedPassword 
+    password: hashedPassword,
+    role: role
 } });
   } catch (err) {
     console.error(err);
     return;
     } 
 };
+
 
 usersController.findOne = async (req, res) => {
 

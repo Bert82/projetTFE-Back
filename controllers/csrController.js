@@ -6,7 +6,7 @@ const csrController = {};
 csrController.findAll = async (req, res) => {
 
   try {
-    const data = await db.promise().query('SELECT date_csr, decision, remarque FROM CSR');
+    const data = await db.promise().query('SELECT * FROM CSR');
     res.json(data);
   } catch (err) {
     console.error(err);

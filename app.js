@@ -16,6 +16,7 @@ const csrRouter = require('./routes/csr');
 const agentReportRouter = require('./routes/agentReport');
 //const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
+const listeAgentRouter = require('./routes/listeAgent');
 
 
 
@@ -41,6 +42,7 @@ app.use('/applicant', applicantRouter);
 app.use('/mobilite', mobiliteRouter);
 app.use('/csr', csrRouter);
 app.use('/agentReport', agentReportRouter);
+app.use('/listeAgent', listeAgentRouter);
 //app.use('/auth', authRouter);
 //app.use(cors());
 
