@@ -72,27 +72,43 @@ csrController.findAll = async (req, res) => {
 
   csrController.suivi = async (req, res) => {
     const { id } = req.params;
-  
+
     try {
-      const [rows] = await db
-        .promise()
-        .query("SELECT * FROM CSR WHERE idCSR = ?", [id]);
-  
-      if (rows.length === 0) {
-        return res.status(404).json({ message: "Rapport not found" });
-      }
-  
-      const rapport = rows[0];
-      const fields = ["decision"];
-      const isValid = fields.every(
-        (field) => rapport[field] !== null && rapport[field] !== ""
-      );
-  
-      res.json({ isValid });
+        // Récupérer le rapport CSR
+        const [rowsCSR] = await db
+            .promise()
+            .query("SELECT * FROM CSR WHERE idCSR = ?", [id]);
+
+        if (rowsCSR.length === 0) {
+            return res.status(404).json({ message: "Rapport not found" });
+        }
+
+        const rapportCSR = rowsCSR[0];
+
+        // Récupérer les informations de l'applicant lié au CSR (exemple : jointure avec la table Applicant)
+        const [rowsApplicant] = await db
+            .promise()
+            .query("SELECT * FROM Applicant WHERE id_applicant = ?", [rapportCSR.applicant_Id]);
+
+        if (rowsApplicant.length === 0) {
+            return res.status(404).json({ message: "Applicant not found" });
+        }
+
+        const applicant = rowsApplicant[0];
+
+        // Vérifier la validité du rapport CSR
+        const fields = ["decision"];
+        const isValid = fields.every(
+            (field) => rapportCSR[field] !== null && rapportCSR[field] !== ""
+        );
+
+        // Retourner les informations du rapport CSR et de l'applicant
+        res.json({ isValid, rapportCSR, applicant });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Internal server error" });
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
     }
+    
   };
 
  

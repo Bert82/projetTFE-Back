@@ -69,7 +69,7 @@ usersController.findOne = async (req, res) => {
     const { id } = req.params;
     
     try {
-      const [users] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id WHERE id = ?', [id]);
+      const [users] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id LEFT JOIN Rapport_agent r on a.Id_applicant = r.applicant_Id LEFT JOIN CSR c ON a.Id_applicant = c.applicant_id WHERE id = ?', [id]);
       
       if (!users) {
         return res.status(404).json({ message: 'Demandeur non trouvé' });
@@ -104,5 +104,43 @@ usersController.log = async (req, res) => {
         });
     });
 }
+
+usersController.getCurrentUser = async (req, res) => {
+  try {
+      const user = req.user; 
+      res.json(user);
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+usersController.suivi = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [rows] = await db
+      .promise()
+      .query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id LEFT JOIN Rapport_agent r on a.Id_applicant = r.applicant_Id LEFT JOIN CSR c ON a.Id_applicant = c.applicant_id WHERE id = ?', [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Rapport not found" });
+    }
+
+    const rapport = rows[0];
+    const fields = ["garage", "vehicule", "nuisance"];
+    const isValid = fields.every(
+      (field) => rapport[field] !== null && rapport[field] !== ""
+    );
+
+    const isCsrValid = rapport.decision !== null && rapport.decision !== "";
+
+    res.json({ isValid, isCsrValid });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
   module.exports = usersController;
