@@ -9,7 +9,7 @@ const usersController = {};
 usersController.findAll = async (req, res) => {
     try {                                     
      // const [data, ] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
-     const data = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
+     const [data, ] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
       res.json(data);
     } catch (err) {
       console.error(err);

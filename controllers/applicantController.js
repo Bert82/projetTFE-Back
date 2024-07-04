@@ -6,7 +6,7 @@ const applicantController = {};
 applicantController.findAll = async (req, res) => {
 
   try {
-    const data = await db.promise().query('SELECT * FROM Applicant a LEFT JOIN Rapport_agent r on a.Id_applicant = r.applicant_Id LEFT JOIN CSR c ON a.Id_applicant = c.applicant_id');
+    const [data, ] = await db.promise().query('SELECT * FROM Applicant a LEFT JOIN users u on a.user_id = u.id LEFT JOIN Rapport_agent r on a.Id_applicant = r.applicant_Id LEFT JOIN CSR c ON a.Id_applicant = c.applicant_id');
     
     res.json(data);
   } catch (err) {
@@ -17,8 +17,6 @@ applicantController.findAll = async (req, res) => {
 
 applicantController.create = async (req, res) => {
   const {
-    nom,
-    prenom,
     dateNaissance,
     adresse,
     localite,

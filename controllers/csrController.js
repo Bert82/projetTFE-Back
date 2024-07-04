@@ -46,6 +46,55 @@ csrController.findAll = async (req, res) => {
 
   };
 
+  csrController.findOne = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const [agentReport] = await db
+        .promise()
+        .query(
+          "SELECT * FROM CSR WHERE idCSR = ?",
+          [id]
+        );
+  
+      if (!agentReport) {
+        return res.status(404).json({ message: "rapport non trouvé" });
+      }
+  
+      res.json(agentReport);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  
+  };
+
+
+  csrController.suivi = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const [rows] = await db
+        .promise()
+        .query("SELECT * FROM CSR WHERE idCSR = ?", [id]);
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "Rapport not found" });
+      }
+  
+      const rapport = rows[0];
+      const fields = ["decision"];
+      const isValid = fields.every(
+        (field) => rapport[field] !== null && rapport[field] !== ""
+      );
+  
+      res.json({ isValid });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
  
   
 
