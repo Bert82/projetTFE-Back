@@ -32,10 +32,10 @@ applicantController.create = async (req, res) => {
  // }
 
   
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: "Le format de l'adresse email est invalide." });
-  }
+  //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //if (!emailRegex.test(email)) {
+  //  return res.status(400).json({ message: "Le format de l'adresse email est invalide." });
+  //}
 
   try {
     console.log("Valeurs reçues :", {
