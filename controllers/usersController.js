@@ -2,13 +2,19 @@ const db = require("../utils/db-client.util");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); 
 
-
+const {
+  validateEmail,
+  validateMatricule,
+  validatePassword,
+  validateNom,
+  validatePrenom
+} = require('../validators/validators.js');
 
 const usersController = {};
 
 usersController.findAll = async (req, res) => {
     try {                                     
-     // const [data, ] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
+    
      const [data, ] = await db.promise().query('SELECT * FROM users u LEFT JOIN Applicant a on u.id = a.user_id'); 
       res.json(data);
     } catch (err) {
@@ -37,10 +43,22 @@ usersController.create = async (req, res) => {
         role
     });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: "Le format de l'adresse email est invalide." });
+    if (!validateNom(nom)) {
+      return res.status(400).json({ message: "Le nom est invalide. Il doit contenir uniquement des lettres." });
   }
+  if (!validatePrenom(prenom)) {
+      return res.status(400).json({ message: "Le prénom est invalide. Il doit contenir uniquement des lettres." });
+  }
+  if (!validateMatricule(matricule)) {
+      return res.status(400).json({ message: "Le matricule est invalide. Il doit être un nombre à 4 chiffres." });
+  }
+  if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Le format de l'adresse email est invalide." });
+  }
+  if (!validatePassword(password)) {
+      return res.status(400).json({ message: "Le mot de passe doit contenir au moins 8 caractères et une majuscule." });
+  }
+ 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const data = await db.promise().query('INSERT INTO users (nom, prenom, matricule, email, password, role) VALUES (?, ?, ?, ?, ?,?)', [nom, prenom, matricule, email, hashedPassword, role]);
@@ -59,7 +77,7 @@ usersController.create = async (req, res) => {
 } });
   } catch (err) {
     console.error(err);
-    return;
+    res.status(500).json({ message: "Une erreur est survenue lors de la création de l'utilisateur." });
     } 
 };
 
