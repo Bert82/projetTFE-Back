@@ -7,7 +7,7 @@ router.get("", controller.findAll);
 router.get("/:id", controller.findOne);
 router.get("/:id/statut", controller.suivi);
 router.post("", controller.create);
-//router.patch(":id", controller.updateOne);
+router.patch(":id", controller.updateOne);
 //router.delete(":id", controller.delete);
 
 module.exports = router;

@@ -94,4 +94,47 @@ agentReportController.suivi = async (req, res) => {
   }
 };
 
+agentReportController.updateOne = async (req, res) => {
+  const { id } = req.params;
+  const { garage, vehicule, nuisance, rapport, applicant_Id } = req.body;
+
+  try {
+    console.log("Valeurs reçues pour la mise à jour :", {
+      garage,
+      vehicule,
+      nuisance,
+      rapport,
+      applicant_Id,
+    });
+
+    // Vérifiez si l'ID du rapport est fourni
+    if (!id) {
+      return res.status(400).json({ error: "L'ID du rapport est requis." });
+    }
+
+    // Préparez la requête SQL pour la mise à jour
+    const data = await db
+      .promise()
+      .query(
+        "UPDATE Rapport_agent SET garage = ?, vehicule = ?, nuisance = ?, rapport = ?, applicant_Id = ? WHERE id = ?",
+        [garage, vehicule, nuisance, rapport, applicant_Id, id]
+      );
+
+    console.log("Données mises à jour :", data);
+
+    // Vérifiez si la mise à jour a affecté une ligne
+    if (data[0].affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ error: "Le rapport avec cet ID n'existe pas." });
+    }
+
+    res.status(200).json({ message: "Le rapport a bien été mis à jour." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erreur serveur." });
+  }
+
+}
+
 module.exports = agentReportController;
